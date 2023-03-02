@@ -25,10 +25,9 @@ let ratings_filtered = ratings.filter((score) => score > 0);
 //calculate number of negative as diff of size
 let NN = ratings.length - ratings_filtered.length;
 
-//calc average
-let avg_ratings_filtered = ratings_filtered.reduce((r1, r2) => r1 + r2);
-avg_ratings_filtered = Math.round(
-  avg_ratings_filtered / ratings_filtered.length
+//calc average = sum(score)/number of scores
+let avg_ratings_filtered = Math.round(
+  ratings_filtered.reduce((r1, r2) => r1 + r2) / ratings_filtered.length
 );
 
 //add NN+2 new ratings with value=avg
@@ -37,12 +36,13 @@ for (let i = 0; i < NN + 2; i++) {
 }
 
 // evaluate new averages for original and new
-let avg_original = ratings.reduce((r1, r2) => r1 + r2);
-avg_original = Math.round(avg_original / ratings.length);
-
-let avg_new_ratings_filtered = ratings_filtered.reduce((r1, r2) => r1 + r2);
-avg_new_ratings_filtered = Math.round(
-  avg_new_ratings_filtered / ratings_filtered.length
+let avg_original = Math.round(
+  ratings.reduce((r1, r2) => r1 + r2) / ratings.length
 );
 
-console.log("\n" + avg_original + "\n" + avg_new_ratings_filtered);
+avg_ratings_filtered = Math.round(
+  ratings_filtered.reduce((r1, r2) => r1 + r2) / ratings_filtered.length
+);
+
+//print values
+console.log("\n" + avg_original + "\n" + avg_ratings_filtered);
