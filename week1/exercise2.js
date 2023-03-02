@@ -14,16 +14,18 @@ Develop a small JS program to manage the list of users in a Q&A website.
     Extra: in alphabetical order of acronym.
  */
 
-"use strict"
+"use strict";
 
-let users="Luigi De Russis, Luca Mannella, Fulvio Corno, Juan Pablo Saenz Moreno, Enrico Masala, Antonio Servetti, Eros Fani";
+let users =
+  "Luigi De Russis, Luca Mannella, Fulvio Corno, Juan Pablo Saenz Moreno, Enrico Masala, Antonio Servetti, Eros Fani";
 
-//split to array
-let users_array=users.split(", ");
+//split string to array && remove whitespace
+let users_array = users.split(", ").map((name) => name.replaceAll(" ", ""));
 
-//removes space from inside names
-for (let i=0;i<users_array.length;i++){
-    users_array[i]=users_array[i].replace(" ","");
-}
+// new array with acro
+const regex = /[^A-Z]/g; // need gloabl flag for replaceAll
+let users_acro = users_array.map((name) => name.replaceAll(regex, ""));
 
-console.log(users_array);
+// sort and print
+console.log(users_array.sort().toString());
+console.log(users_acro.sort().toString());
