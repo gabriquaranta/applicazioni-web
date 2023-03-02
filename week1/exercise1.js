@@ -31,9 +31,8 @@ let avg_ratings_filtered = Math.round(
 );
 
 //add NN+2 new ratings with value=avg
-for (let i = 0; i < NN + 2; i++) {
-  ratings_filtered.push(avg_ratings_filtered);
-}
+// by creating a new array of size NN then concatenating 
+ratings_filtered.concat(Array(NN).fill(avg_ratings_filtered));
 
 // evaluate new averages for original and new
 let avg_original = Math.round(
