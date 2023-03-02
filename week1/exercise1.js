@@ -41,7 +41,7 @@ let avg_original = Math.round(
 );
 
 avg_ratings_filtered = Math.round(
-  ratings_filtered.reduce((r1, r2) => r1 + r2) / ratings_filtered.length
+  ratings_filtered.reduce((r1, r2) => r1 + r2)/ratings_filtered.length
 );
 
 //print values
