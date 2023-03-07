@@ -1,8 +1,5 @@
 "use strict";
 
-// import dayjs
-const dayjs = require("dayjs");
-
 // asnwers class
 class AnswerClass {
   constructor(response, name, score, date) {
