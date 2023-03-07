@@ -35,6 +35,8 @@ class QuestionClass {
   }
 
   // returns an array of Answers, sorted by increasing date
+  // assuming the strings are in format yyyy-mm-dd they can be
+  // compared as strings using >,<
   listByDate() {
     return this.AnswersList.sort((a1, a2) => (a1.date < a2.date ? -1 : 1));
   }
