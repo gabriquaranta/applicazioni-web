@@ -52,7 +52,7 @@ class QuestionClass {
 
   averageScore() {
     return (
-      this.AnswersList.reduce((a1, a2) => a1.score + a2.score) /
+      this.AnswersList.map((a) => a.score).reduce((a1, a2) => a1 + a2) /
       this.AnswersList.length
     );
   }
@@ -64,6 +64,7 @@ console.log(q1.question);
 
 q1.addAnswer(new AnswerClass("tues", "gab", 3, dayjs("2022-03-07")));
 q1.addAnswer(new AnswerClass("mon", "gab", 0, dayjs("2022-03-06")));
+q1.addAnswer(new AnswerClass("wed", "gab", 6, dayjs("2022-03-08")));
 
 console.log(q1.listByDate());
 
