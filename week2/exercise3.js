@@ -39,7 +39,7 @@ class QuestionClass {
 
   // returns an array of Answers, sorted by increasing date
   listByDate() {
-    return this.AnswersList.sort((a1, a2) => a1.date - a2.date);
+    return this.AnswersList.sort((a1, a2) => (a1.date < a2.date ? -1 : 1));
   }
 
   // returns an array of Answers, sorted by increasing score
@@ -53,7 +53,7 @@ const q1 = new QuestionClass("what day is it", "Gab", "2022/03/7");
 
 console.log(q1.question);
 
-q1.addAnswer(new AnswerClass("tues", "gab", 3, "2022/03/07"));
-q1.addAnswer(new AnswerClass("mon", "gab", 0, "2022/03/06"));
+q1.addAnswer(new AnswerClass("tues", "gab", 3, "2022-03-07"));
+q1.addAnswer(new AnswerClass("mon", "gab", 0, "2022-03-06"));
 
-console.log(q1.listByScore());
+console.log(q1.listByDate());
