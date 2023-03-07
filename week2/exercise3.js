@@ -30,12 +30,12 @@ class QuestionClass {
 
   // find all answers by one person for this question
   findAll(name) {
-    return this.AnswersList.filter((ans) => ans.name() == name);
+    return this.AnswersList.filter((ans) => ans.name == name);
   }
 
   // asnwers after a given date supposing format is yyyy/mm/dd
   afterDate(date) {
-    return this.AnswersList.filter((ans) => ans.date > date);
+    return this.AnswersList.filter((ans) => ans.date.isAfter(date));
   }
 
   // returns an array of Answers, sorted by increasing date
@@ -49,13 +49,22 @@ class QuestionClass {
   listByScore() {
     return this.AnswersList.sort((a1, a2) => a1.score - a2.score);
   }
+
+  averageScore() {
+    return (
+      this.AnswersList.reduce((a1, a2) => a1.score + a2.score) /
+      this.AnswersList.length
+    );
+  }
 }
 
 // main
-const q1 = new QuestionClass("what day is it", "Gab", dayjs("20220307"));
+let q1 = new QuestionClass("what day is it", "Gab", dayjs("20220307"));
 console.log(q1.question);
 
 q1.addAnswer(new AnswerClass("tues", "gab", 3, dayjs("2022-03-07")));
 q1.addAnswer(new AnswerClass("mon", "gab", 0, dayjs("2022-03-06")));
 
 console.log(q1.listByDate());
+
+console.log(q1.averageScore());
