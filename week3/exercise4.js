@@ -2,12 +2,10 @@
 
 const dayjs = require("dayjs");
 const sqlite3 = require("sqlite3");
-const timers = require("timers");
 
 // asnwers class
 class AnswerClass {
-  constructor(id, response, name, score, date) {
-    this.id = id;
+  constructor(response, name, score, date) {
     this.response = response;
     this.name = name;
     this.score = score;
@@ -22,87 +20,53 @@ class QuestionClass {
     this.name = name;
     this.date = date;
     this.db = db;
-
-    console.log(this.db);
   }
 
-  add = (answerObj) => {
-    let query = "insert into answers values ";
-    query = query + answerObj.id + ", ";
-    query = query + answerObj.response + ", ";
-    query = query + answerObj.name + ", ";
-    query = query + answerObj.score + ", ";
-    query = query + answerObj.date;
+  async add(ans) {
+    await this.db.run(
+      "insert into answers(text,respondent,score,date) values (?,?,?,?)",
+      [ans.response, ans.name, ans.score, ans.date.format("DD/MM/YYYY")],
+      (res, err) => {
+        if (err) console.log(res + " ERR_INS");
+      }
+    );
+  }
 
-    console.log(query);
-
-    this.db.run(query, (err) => {
-      if (err) console.log("err_add");
+  async getAll() {
+    await this.db.all("select * from answers", [], (err, rows) => {
+      if (err) throw err;
+      return rows;
     });
-  };
+  }
 }
 
-let main = () => {
-  let ansId = 0;
+// MAIN
+async function main() {
+  //
   let db = new sqlite3.Database("qa.sqlite", (err) => {
-    if (err) console.log("err_db");
-    else console.log("q1 db linked");
+    if (err) console.log("ERR_DB");
   });
 
-  db.run(
-    "CREATE TABLE if not exists answers (id INTEGER PRIMARY KEY AUTOINCREMENT, text TEXT, respondent TEXT, score INTEGER, date DATE);",
-    (err) => {
-      if (err) console.log("err_create");
-      else console.log("q1db answers table created");
-    }
+  let question = new QuestionClass(
+    "what day is it",
+    "gab",
+    dayjs("15-03-2022").format("YYYY/MM/DD"),
+    db
   );
 
-  db.run("insert into answers values 0,ans,name,1,2020/02/01", (err) => {
-    if (err) console.log("err_ins");
-    else console.log("q1db answers table created");
+  let a1 = new AnswerClass("tues", "gab", 3, dayjs("2022-03-18"));
+  let a2 = new AnswerClass("mon", "gab", 0, dayjs("2019-03-06"));
+  let a3 = new AnswerClass("wed", "gab", 6, dayjs("2023-06-08"));
+
+  await question.db.run("delete from answers where id>0", (res, err) => {
+    if (err) console.log(res + "ERR_DEL");
   });
 
-  let q1 = new QuestionClass("what day is it", "Gab", dayjs("20220307"), db);
-  //console.log(q1.question);
+  await question.add(a1);
+  await question.add(a2);
+  await question.add(a3);
 
-  /*
-timers.setInterval(() => {
-  q1.add(
-    new AnswerClass(
-      ansId,
-      "tues",
-      "gab",
-      3,
-      dayjs("2022-03-07").format("DD/MM/YYYY")
-    )
-  );
-  ansId++;
-}, 2000);
-
-
-q1.add(
-  new AnswerClass(
-    ansId,
-    "mon",
-    "gab",
-    0,
-    dayjs("2022-03-06").format("DD/MM/YYYY")
-  )
-);
-ansId++;
-q1.add(
-  new AnswerClass(
-    ansId,
-    "wed",
-    "gab",
-    6,
-    dayjs("2022-03-08").format("DD/MM/YYYY")
-  )
-);
-ansId++;
-*/
-
-  db.close();
-};
+  console.log(await question.getAll().toString()); //RETURN promise NEED check resolution
+}
 
 main();

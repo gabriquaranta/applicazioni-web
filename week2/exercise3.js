@@ -1,6 +1,5 @@
 "use strict";
 
-const { Dayjs } = require("dayjs");
 // dayjs library
 const dayjs = require("dayjs");
 
