@@ -1,7 +1,6 @@
 "use strict";
 
 const dayjs = require("dayjs");
-const { result } = require("lodash");
 const sqlite3 = require("sqlite3");
 
 const dateformat = "YYYY/MM/DD";
