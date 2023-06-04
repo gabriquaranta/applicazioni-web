@@ -1,25 +1,35 @@
-import { useState } from "react";
+/*
+ * [2022/2023]
+ * 01UDFOV Applicazioni Web I / 01TXYOV Web Applications I
+ * Lab 6
+ */
 
-import Navigation from "../components/Navigation";
-import FilmTable from "../components/FilmTable";
-import AddMovie from "../components/AddMovie";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+import "./App.css";
 
-import FILMS from "./films";
 import dayjs from "dayjs";
 
-function App(props) {
+import { React, useState } from "react";
+import { Container, Row, Col } from "react-bootstrap/";
+
+import FILMS from "./films";
+
+import { Navigation } from "./components/Navigation";
+import Filters from "./components/Filters";
+import FilmLibrary from "./components/FilmLibrary";
+
+function App() {
   // This state contains the active filter
   const [activeFilter, setActiveFilter] = useState("filter-all");
 
-  const isSeenLastMonth = (film) => {
-    if ("watchDate" in film) {
-      // Accessing watchDate only if defined
-      const diff = film.watchDate.diff(dayjs(), "month");
-      const isLastMonth = diff <= 0 && diff > -1; // last month
-      return isLastMonth;
-    }
-  };
-
+  /**
+   * Defining a structure for Filters
+   * Each filter is identified by a unique name and is composed by the following fields:
+   * - A label to be shown in the GUI
+   * - An ID (equal to the unique name), used as key during the table generation
+   * - A filter function applied before passing the films to the FilmTable component
+   */
   const filters = {
     "filter-all": {
       label: "All",
@@ -48,87 +58,71 @@ function App(props) {
     },
   };
 
-  const [filmArray, setFilmArray] = useState(FILMS);
+  const isSeenLastMonth = (film) => {
+    if ("watchDate" in film && film.watchDate) {
+      // Accessing watchDate only if defined
+      const diff = film.watchDate.diff(dayjs(), "month");
+      const isLastMonth = diff <= 0 && diff > -1; // last month
+      return isLastMonth;
+    }
+  };
+
+  // This state contains the list of films (it is initialized from a predefined array).
+  const [films, setFilms] = useState(FILMS);
+
+  // This state contains the last film ID (the ID is continuously incremented and never decresead).
+  const [lastFilmId, setLastFilmId] = useState(FILMS[FILMS.length - 1].id + 1);
+
+  // This function add the new film into the FilmLibrary array
+  const saveNewFilm = (newFilm) => {
+    setFilms((films) => [...films, { id: lastFilmId, ...newFilm }]);
+    setLastFilmId((id) => id + 1);
+  };
+
+  // This function updates a film already stored into the FilmLibrary array
+  const updateFilm = (film) => {
+    setFilms((oldFilms) => {
+      return oldFilms.map((f) => {
+        if (film.id === f.id)
+          return {
+            id: film.id,
+            title: film.title,
+            favorite: film.favorite,
+            watchDate: film.watchDate,
+            rating: film.rating,
+          };
+        else return f;
+      });
+    });
+  };
 
   return (
-    <div className="container-fluid vh-100 d-flex flex-column">
-      <div className="row ">
-        <Navigation />
-      </div>
+    <Container fluid className="App">
+      <Navigation />
 
-      <div className="row flex-grow-1">
-        <div className="col-2 bg-light">
-          <div className="d-flex flex-column justify-content-center p-4">
-            <h2>Views</h2>
-            <ul className="nav nav-pills flex-column mt-2" role="tablist">
-              <li className="nav-items">
-                <a
-                  className="nav-link"
-                  href="#"
-                  onClick={() => {
-                    setActiveFilter("filter-all");
-                  }}
-                >
-                  All
-                </a>
-              </li>
-              <li className="nav-item">
-                <a
-                  className="nav-link"
-                  href="#"
-                  onClick={() => {
-                    setActiveFilter("filter-favorite");
-                  }}
-                >
-                  Favorites
-                </a>
-              </li>
-              <li className="nav-item">
-                <a
-                  className="nav-link"
-                  href="#"
-                  onClick={() => {
-                    setActiveFilter("filter-best");
-                  }}
-                >
-                  Best Rated
-                </a>
-              </li>
-              <li className="nav-item">
-                <a
-                  className="nav-link"
-                  href="#"
-                  onClick={() => {
-                    setActiveFilter("filter-lastmonth");
-                  }}
-                >
-                  Seen last Month
-                </a>
-              </li>
-              <li className="nav-item">
-                <a
-                  className="nav-link"
-                  href="#"
-                  onClick={() => {
-                    setActiveFilter("filter-unseen");
-                  }}
-                >
-                  Not Seen
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="col ">
-          <FilmTable
-            currentFilter={filters[activeFilter].label}
-            films={filmArray.filter(filters[activeFilter].filterFunction)}
+      <Row className="vh-100">
+        <Col md={4} xl={3} bg="light" className="below-nav" id="left-sidebar">
+          <Filters
+            items={filters}
+            selected={activeFilter}
+            onSelect={setActiveFilter}
           />
-          <AddMovie />
-        </div>
-      </div>
-    </div>
+        </Col>
+
+        {/* </Collapse> */}
+        <Col md={8} xl={9} className="below-nav">
+          <h1 className="pb-3">
+            Filter:{" "}
+            <span className="notbold">{filters[activeFilter].label}</span>
+          </h1>
+          <FilmLibrary
+            films={films.filter(filters[activeFilter].filterFunction)}
+            saveNewFilm={saveNewFilm}
+            updateFilm={updateFilm}
+          />
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
