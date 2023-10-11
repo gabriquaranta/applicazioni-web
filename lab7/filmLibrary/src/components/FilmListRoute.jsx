@@ -1,25 +1,17 @@
-/*
- * [2022/2023]
- * 01UDFOV Applicazioni Web I / 01TXYOV Web Applications I
- * Lab 6
- */
-
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import "./App.css";
-
-import dayjs from "dayjs";
+import "../App.css";
 
 import { React, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap/";
 
-import FILMS from "./films";
+import dayjs from "dayjs";
 
-import { Navigation } from "./components/Navigation";
-import Filters from "./components/Filters";
-import FilmLibrary from "./components/FilmLibrary";
+import { Navigation } from "./Navigation";
+import Filters from "./Filters";
+import FilmLibrary from "./FilmLibrary";
 
-function App() {
+function FilmListRoute(props) {
   // This state contains the active filter
   const [activeFilter, setActiveFilter] = useState("filter-all");
 
@@ -39,12 +31,12 @@ function App() {
     "filter-favorite": {
       label: "Favorites",
       id: "filter-favorite",
-      filterFunction: (film) => film.favorite,
+      filterFunction: (film) => props.film.favorite,
     },
     "filter-best": {
       label: "Best Rated",
       id: "filter-best",
-      filterFunction: (film) => film.rating >= 5,
+      filterFunction: (film) => props.film.rating >= 5,
     },
     "filter-lastmonth": {
       label: "Seen Last Month",
@@ -54,46 +46,17 @@ function App() {
     "filter-unseen": {
       label: "Unseen",
       id: "filter-unseen",
-      filterFunction: (film) => (film.watchDate ? false : true),
+      filterFunction: (film) => (props.film.watchDate ? false : true),
     },
   };
 
   const isSeenLastMonth = (film) => {
-    if ("watchDate" in film && film.watchDate) {
+    if ("watchDate" in film && props.film.watchDate) {
       // Accessing watchDate only if defined
-      const diff = film.watchDate.diff(dayjs(), "month");
+      const diff = props.film.watchDate.diff(dayjs(), "month");
       const isLastMonth = diff <= 0 && diff > -1; // last month
       return isLastMonth;
     }
-  };
-
-  // This state contains the list of films (it is initialized from a predefined array).
-  const [films, setFilms] = useState(FILMS);
-
-  // This state contains the last film ID (the ID is continuously incremented and never decresead).
-  const [lastFilmId, setLastFilmId] = useState(FILMS[FILMS.length - 1].id + 1);
-
-  // This function add the new film into the FilmLibrary array
-  const saveNewFilm = (newFilm) => {
-    setFilms((films) => [...films, { id: lastFilmId, ...newFilm }]);
-    setLastFilmId((id) => id + 1);
-  };
-
-  // This function updates a film already stored into the FilmLibrary array
-  const updateFilm = (film) => {
-    setFilms((oldFilms) => {
-      return oldFilms.map((f) => {
-        if (film.id === f.id)
-          return {
-            id: film.id,
-            title: film.title,
-            favorite: film.favorite,
-            watchDate: film.watchDate,
-            rating: film.rating,
-          };
-        else return f;
-      });
-    });
   };
 
   return (
@@ -116,9 +79,9 @@ function App() {
             <span className="notbold">{filters[activeFilter].label}</span>
           </h1>
           <FilmLibrary
-            films={films.filter(filters[activeFilter].filterFunction)}
-            saveNewFilm={saveNewFilm}
-            updateFilm={updateFilm}
+            films={props.films.filter(filters[activeFilter].filterFunction)}
+            saveNewFilm={props.saveNewFilm}
+            updateFilm={props.updateFilm}
           />
         </Col>
       </Row>
@@ -126,4 +89,4 @@ function App() {
   );
 }
 
-export default App;
+export default FilmListRoute;
